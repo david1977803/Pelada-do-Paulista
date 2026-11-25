@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#14532d">
-<title>Pelada de Fim de Semana</title>
+<title>Pelada do Paulista</title>
 <style>
 :root{
   --bg:#f3f5f1;--card:#fff;--ink:#17201a;--mut:#6b756d;--line:#e3e8e1;
@@ -273,6 +273,7 @@ function render(){
   // no modo por chegada os times são sempre recalculados a partir da ordem de chegada (evita times desatualizados)
   if((S.config.modoTimes||"chegada")==="chegada")syncTimesChegada();
   $("#hTitle").textContent=S.config.nome||"Pelada";
+  document.title=S.config.nome||"Pelada";
   $("#hSub").textContent=[fmtDate(S.jogo.data),S.config.horario,S.config.local].filter(Boolean).join(" · ")+(RO()?" · visualização":"");
   document.body.classList.toggle("ro",RO());
   const tabsVis=RO()?TABS.filter(([k])=>k!=="caixa"&&k!=="elenco"):TABS;
