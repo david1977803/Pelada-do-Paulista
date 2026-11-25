@@ -168,15 +168,18 @@ function setSync(t){document.getElementById("sync").textContent=t}
 function commit(){
   if(RO()){if(remotoAtual)S=merge(JSON.parse(JSON.stringify(remotoAtual)));render();toast("Somente administradores podem alterar");return}
   render();lsSet();if(!FB)return;dirty=true;clearTimeout(saveTimer);saveTimer=setTimeout(flush,700);setSync("salvando…")}
+let tentativas=0;
 async function flush(){
   if(saving||!dirty||!FB)return;saving=true;dirty=false;
   const tudo=JSON.parse(JSON.stringify(S));const caixa={};CAIXA_KEYS.forEach(k=>{caixa[k]=tudo[k];delete tudo[k]});
-  try{await FB.salvar(tudo,caixa);bancoVazio=false;setSync("salvo ✓")}
-  catch(e){
-    if(e&&e.code==="permission-denied"){isAdmin=false;setSync("sem permissão");if(remotoAtual)S=merge(remotoAtual);render();toast("Sua conta não é administradora")}
-    else{dirty=true;setSync("sem conexão — tentando…");setTimeout(flush,3000+Math.random()*2000)}
+  let falhou=false;
+  try{await FB.salvar(tudo,caixa);bancoVazio=false;tentativas=0;setSync("salvo ✓")}
+  catch(e){falhou=true;const c=(e&&e.code)||"";console.warn("Erro ao salvar",e);
+    if(c==="permission-denied"){isAdmin=false;setSync("sem permissão");if(remotoAtual)S=merge(remotoAtual);render();toast("Sua conta não é administradora")}
+    else if((c==="unavailable"||c==="deadline-exceeded"||c==="resource-exhausted")&&tentativas<5){tentativas++;dirty=true;setSync("sem conexão — tentando…");setTimeout(()=>{if(!saving)flush()},3000*tentativas)}
+    else{tentativas=0;setSync("erro ao salvar");toast("Erro ao salvar: "+(c||e.message||e))}
   }
-  saving=false;if(dirty)flush();
+  saving=false;if(dirty&&!falhou)flush();
 }
 function merge(d){const b=blank();const o=Object.assign(b,d||{});o.config=Object.assign(blank().config,o.config||{});o.jogo=Object.assign(blank().jogo,o.jogo||{});(o.jogadores||[]).forEach(j=>{if(POS_OLD[j.pos])j.pos=POS_OLD[j.pos]});if((o.v||1)<2){o.config.porTime=11;if(o.config.vagas<22)o.config.vagas=22;o.v=2}
   if(!Array.isArray(o.pagamentos))o.pagamentos=[];
@@ -194,7 +197,7 @@ function init(){
 function iniciarFirebase(){
   FB=window.FB_API;if(!FB)return;setSync("conectando…");render();
   FB.ouvirEstado(snap=>{loaded=true;
-    if(snap.existe){bancoVazio=false;if(snap.pendente)return;remotoAtual=snap.dados;aplicarRemoto();setSync(isAdmin?"sincronizado ✓":"atualizado ✓")}
+    if(snap.existe){if(bancoVazio){bancoVazio=false;render()}if(snap.pendente)return;remotoAtual=snap.dados;aplicarRemoto();setSync(isAdmin?"sincronizado ✓":"atualizado ✓")}
     else{bancoVazio=true;remotoAtual=null;setSync("banco vazio");render()}
   },e=>setSync("offline"));
   FB.aoLogar(async u=>{
@@ -797,10 +800,11 @@ try{
   const auth=au.getAuth(app);
   const rEstado=fs.doc(db,"pelada","estado"),rCaixa=fs.doc(db,"pelada","caixa"),rAdm=fs.doc(db,"acesso","admins");
   let unsubCaixa=null;
+  const ler=s=>{if(!s.exists())return null;const d=s.data();if(typeof d.json==="string"){try{return JSON.parse(d.json)}catch(e){return null}}return d};
   window.FB_API={
-    ouvirEstado:(cb,err)=>fs.onSnapshot(rEstado,{includeMetadataChanges:false},s=>cb({existe:s.exists(),dados:s.data(),pendente:s.metadata.hasPendingWrites}),err),
-    ouvirCaixa:cb=>{if(unsubCaixa)unsubCaixa();unsubCaixa=fs.onSnapshot(rCaixa,s=>cb(s.data()),()=>{})},
-    salvar:async(estado,caixa)=>{await fs.setDoc(rEstado,estado);await fs.setDoc(rCaixa,caixa)},
+    ouvirEstado:(cb,err)=>fs.onSnapshot(rEstado,s=>cb({existe:s.exists(),dados:ler(s),pendente:s.metadata.hasPendingWrites}),err),
+    ouvirCaixa:cb=>{if(unsubCaixa)unsubCaixa();unsubCaixa=fs.onSnapshot(rCaixa,s=>cb(ler(s)),()=>{})},
+    salvar:async(estado,caixa)=>{await fs.setDoc(rEstado,{json:JSON.stringify(estado),em:Date.now()});await fs.setDoc(rCaixa,{json:JSON.stringify(caixa),em:Date.now()})},
     lerAdmins:async()=>{const s=await fs.getDoc(rAdm);return s.exists()?s.data():null},
     salvarAdmins:a=>fs.setDoc(rAdm,a),
     entrar:async()=>{const p=new au.GoogleAuthProvider();try{await au.signInWithPopup(auth,p)}catch(e){if(e.code==="auth/popup-blocked"||e.code==="auth/operation-not-supported-in-this-environment")await au.signInWithRedirect(auth,p);else throw e}},
