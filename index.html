@@ -394,6 +394,11 @@ function montarChegada(){
 }
 function syncTimesChegada(){const M=montarChegada();const T=M.T.slice();while(T.length>2&&!T[T.length-1].length)T.pop();S.times=T}
 let busca="";
+function limparTimes(){
+  confirmar("Tirar todos os jogadores dos times e zerar a ordem de chegada? O cadastro do Elenco e a lista de quem jogou o jogo anterior continuam iguais.",()=>{
+    S.jogo.chegada=[];S.jogo.fixo=null;S.jogo.ordemResto=null;S.jogo.status={};S.jogo.ordem=[];S.times=[];
+    syncTimesChegada();commit();toast("Times limpos")},"Limpar tudo");
+}
 function chegou(id){S.jogo.chegada=S.jogo.chegada||[];if(!S.jogo.chegada.includes(id))S.jogo.chegada.push(id);if(S.jogo.status[id]!=="sim")setPSilent(id);busca="";syncTimesChegada();commit()}
 function setPSilent(id){S.jogo.status[id]="sim";S.jogo.ordem=S.jogo.ordem.filter(x=>x!==id);S.jogo.ordem.push(id)}
 function saiu(id){S.jogo.chegada=(S.jogo.chegada||[]).filter(x=>x!==id);if(S.jogo.ordemResto)S.jogo.ordemResto=S.jogo.ordemResto.filter(x=>x!==id);if(S.jogo.fixo)S.jogo.fixo=S.jogo.fixo.map(t=>t.filter(x=>x!==id));syncTimesChegada();commit()}
@@ -422,7 +427,8 @@ function vChegada(){
     <input id="busca" placeholder="Buscar jogador…" value="${esc(busca)}" oninput="filtrar(this.value)" autocomplete="off">
     <ul class="list" id="porChegar" style="max-height:320px;overflow:auto;margin-top:6px">${falta.map(j=>`<li data-n="${esc(j.nome.toLowerCase())}"><div class="grow"><div class="name">${esc(j.nome)} ${j.pos==="Goleiro"?"🧤":""}</div><div class="meta">${j.pos}${st[j.id]==="sim"?" · confirmado":""}</div></div>${M.ant.has(j.id)?`<span class="pill g">jogou anterior</span>`:`<span class="pill">não jogou</span>`}<button class="btn" style="padding:7px 12px" onclick="chegou('${j.id}')">Chegou</button></li>`).join("")||`<li class="meta">Todo mundo já chegou.</li>`}</ul></div>`;
   const fixo=!!S.jogo.fixo;
-  h+=`<div class="card"><div class="row"><div class="grow"><b>Times 1 e 2 ${fixo?"travados 🔒":"em formação"}</b><div class="meta">${fixo?"Quem chegar agora vai para os times 3 e 4. Trocas feitas no Campo ficam mantidas.":"Mudam conforme a turma do jogo anterior vai chegando. Trave quando for começar."}</div></div><button class="btn ${fixo?"sec":""}" onclick="travar()">${fixo?"Destravar":"Travar"}</button></div></div>`;
+  h+=`<div class="card"><div class="row"><div class="grow"><b>Times 1 e 2 ${fixo?"travados 🔒":"em formação"}</b><div class="meta">${fixo?"Quem chegar agora vai para os times 3 e 4. Trocas feitas no Campo ficam mantidas.":"Mudam conforme a turma do jogo anterior vai chegando. Trave quando for começar."}</div></div><button class="btn ${fixo?"sec":""}" onclick="travar()">${fixo?"Destravar":"Travar"}</button></div>
+    ${M.ch.length?`<button class="btn danger full" style="margin-top:10px" onclick="limparTimes()">Limpar todos os jogadores dos times</button>`:""}</div>`;
   h+=M.T.map((t,i)=>teamCard(t,i,M,TN(i))).join("");
   if(M.espera.length)h+=`<div class="card"><h2>Próximos (fora dos 4 times)</h2><ul class="list">${M.espera.map((id,i)=>`<li><span class="rank">${i+1}</span><div class="grow name">${esc(P(id).nome)}</div></li>`).join("")}</ul></div>`;
   if(M.ch.length)h+=`<div class="card"><h2>Ordem de chegada</h2><ul class="list">${M.ch.map((id,i)=>`<li><span class="rank">${i+1}</span><div class="grow"><div class="name">${esc(P(id).nome)}</div><div class="meta">${P(id).pos}</div></div>${M.ant.has(id)?`<span class="pill g">anterior</span>`:""}<button class="btn ghost" onclick="saiu('${id}')">desfazer</button></li>`).join("")}</ul></div>`;
@@ -528,7 +534,7 @@ function vCampo(){
   const baixo=campoTime-campoTime%2,cima=baixo+1;
   const ant=new Set(S.anterior||[]);
   const btn=i=>i<nT?`<button class="tsel ${i===baixo||i===cima?"on":""}" style="--c:${TEAM_COLORS[i][1]}" onclick="campoTime=${i};render()">${i+1}º TIME <span class="tcor" style="color:${TXT_COR[TEAM_COLORS[i][1]]}">(${TEAM_COLORS[i][0].toUpperCase()})</span><small>${(S.times[i]||[]).filter(P).length} jogadores</small></button>`:`<span></span>`;
-  const draw=(t,topo)=>{const ids=(S.times[t]||[]).filter(P);if(!ids.length)return`<div class="pempty" style="top:${topo?"28%":"72%"}">${t+1}º time sem jogadores</div>`;
+  const draw=(t,topo)=>{const ids=(S.times[t]||[]).filter(P);
     const cor=TEAM_COLORS[t][1];
     return escalar(ids).map(p=>{const x=topo?100-p.x:p.x,y=topo?140-p.y:p.y;const st=`left:${x}%;top:${y/1.4}%`;
       if(p.livre)return `<div class="pl" style="${st}"><div class="av livre"></div></div>`;
@@ -540,6 +546,7 @@ function vCampo(){
     <div class="pitchWrap">${PITCH}${cima<nT?draw(cima,true):""}${draw(baixo,false)}
       <div class="vs"><i style="background:${TEAM_COLORS[baixo][1]}"></i>x<i style="background:${TEAM_COLORS[cima][1]}"></i></div></div>
     <div class="tsrow">${btn(0)}${btn(2)}</div>
+    ${ch?`<button class="btn danger full" style="margin:6px 0" onclick="limparTimes()">Limpar todos os jogadores dos times</button>`:""}
     ${ch?`<div class="legend"><span class="lg"><i style="background:#fff"></i>jogou o anterior</span><span class="lg"><i style="background:#ef4444"></i>completou (não jogou o anterior)</span></div>`:""}
     <div class="note" style="text-align:center">Toque em um time para ver o confronto (1º x 2º ou 3º x 4º). <b>Dois toques no jogador</b> para substituir, trocar de time ou retirar; um toque mostra os detalhes.</div></div>`;
 }
