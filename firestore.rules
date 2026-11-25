@@ -1,0 +1,43 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // TROQUE pelo e-mail (conta Google) do dono do app, em letras minúsculas
+    function dono() {
+      return request.auth != null
+        && request.auth.token.email_verified == true
+        && request.auth.token.email.lower() == 'SEU-EMAIL@gmail.com';
+    }
+
+    function admin() {
+      return dono() || (
+        request.auth != null
+        && request.auth.token.email_verified == true
+        && exists(/databases/$(database)/documents/acesso/admins)
+        && request.auth.token.email.lower() in get(/databases/$(database)/documents/acesso/admins).data.emails
+      );
+    }
+
+    // Lista, times, campo e placar: todos podem VER; só administradores alteram
+    match /pelada/estado {
+      allow read: if true;
+      allow write: if admin();
+    }
+
+    // Caixa (mensalidades e despesas): só administradores veem e alteram
+    match /pelada/caixa {
+      allow read, write: if admin();
+    }
+
+    // Lista de administradores: só o dono altera
+    match /acesso/admins {
+      allow read: if request.auth != null;
+      allow write: if dono();
+    }
+
+    // Qualquer outra coisa: bloqueado
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

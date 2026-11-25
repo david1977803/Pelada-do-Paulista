@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#14532d">
+<title>Pelada de Fim de Semana</title>
+<style>
+:root{
+  --bg:#f3f5f1;--card:#fff;--ink:#17201a;--mut:#6b756d;--line:#e3e8e1;
+  --g:#15803d;--g2:#14532d;--gl:#dcfce7;--red:#b91c1c;--redl:#fee2e2;--amb:#b45309;--ambl:#fef3c7;
+  --r:14px;
+}
+@media (prefers-color-scheme:dark){
+  :root{--bg:#0f1411;--card:#18201b;--ink:#e8efe9;--mut:#93a097;--line:#26302a;--gl:#173a24;--redl:#3b1717;--ambl:#3a2a10}
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-tap-highlight-color:transparent}
+header{position:sticky;background:linear-gradient(135deg,var(--g2),var(--g));color:#fff;padding:calc(14px + env(safe-area-inset-top)) 16px 14px;position:sticky;top:0;z-index:5}
+header h1{margin:0;font-size:18px;display:flex;align-items:center;gap:8px}
+header .sub{opacity:.85;font-size:13px;margin-top:2px}
+#sync{font-size:11px;opacity:.8;margin-left:auto;font-weight:400}
+main{padding:12px 12px calc(84px + env(safe-area-inset-bottom));max-width:640px;margin:0 auto}
+nav{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--line);display:flex;padding-bottom:env(safe-area-inset-bottom);z-index:5}
+nav button{flex:1;border:0;background:none;color:var(--mut);padding:8px 0 10px;font:inherit;font-size:11px;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer}
+nav button svg{width:22px;height:22px}
+nav button.on{color:var(--g)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:12px}
+.card h2{font-size:15px;margin:0 0 10px;display:flex;align-items:center;gap:8px}
+.card h2 .r{margin-left:auto;font-weight:400;color:var(--mut);font-size:13px}
+.row{display:flex;align-items:center;gap:10px}
+.list{list-style:none;margin:0;padding:0}
+.list li{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line)}
+.list li:last-child{border-bottom:0}
+.grow{flex:1;min-width:0}
+.name{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.meta{color:var(--mut);font-size:12px}
+.pill{font-size:11px;padding:2px 8px;border-radius:99px;background:var(--line);color:var(--mut);white-space:nowrap}
+.pill.g{background:var(--gl);color:var(--g)}
+.pill.red{background:var(--redl);color:var(--red)}
+.pill.amb{background:var(--ambl);color:var(--amb)}
+button.btn{border:0;border-radius:10px;padding:10px 14px;font:inherit;font-weight:600;cursor:pointer;background:var(--g);color:#fff}
+button.btn.sec{background:var(--line);color:var(--ink)}
+button.btn.ghost{background:none;color:var(--g);padding:6px 8px}
+button.btn.danger{background:var(--redl);color:var(--red)}
+button.btn.full{width:100%}
+button.btn:disabled{opacity:.5}
+.chk{width:30px;height:30px;border-radius:50%;border:2px solid var(--line);background:none;display:grid;place-items:center;cursor:pointer;flex:none;color:transparent;padding:0}
+.chk.on{background:var(--g);border-color:var(--g);color:#fff}
+.chk.no{background:var(--redl);border-color:var(--redl);color:var(--red)}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 10px;width:100%}
+label{display:block;font-size:12px;color:var(--mut);margin:8px 0 4px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:10px;text-align:center}
+.stat b{display:block;font-size:20px}
+.stat span{font-size:11px;color:var(--mut)}
+.seg{display:flex;background:var(--line);border-radius:10px;padding:3px;gap:3px}
+.seg button{flex:1;border:0;background:none;padding:7px;border-radius:8px;font:inherit;font-size:13px;color:var(--ink);cursor:pointer}
+.seg button.on{background:var(--card);font-weight:600;box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.team{border-radius:var(--r);padding:12px;margin-bottom:10px;border:1px solid var(--line);background:var(--card)}
+.team h3{margin:0 0 6px;font-size:14px;display:flex;align-items:center;gap:8px}
+.dot{width:12px;height:12px;border-radius:50%;flex:none}
+.stars{color:#eab308;letter-spacing:-1px;font-size:12px}
+.empty{color:var(--mut);text-align:center;padding:18px 8px;font-size:14px}
+.score{display:flex;align-items:center;justify-content:center;gap:14px;font-size:28px;font-weight:700;margin:6px 0}
+.score small{font-size:13px;font-weight:600;color:var(--mut);display:block;text-align:center}
+.mini{border:0;background:var(--line);border-radius:8px;width:32px;height:32px;font-size:18px;cursor:pointer;color:var(--ink)}
+.toast{position:fixed;left:50%;bottom:calc(90px + env(safe-area-inset-bottom));transform:translateX(-50%);background:#111;color:#fff;padding:10px 16px;border-radius:99px;font-size:13px;opacity:0;transition:.2s;pointer-events:none;z-index:20}
+.toast.on{opacity:.92}
+.sheet{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:flex-end;justify-content:center;z-index:30}
+.sheet.on{display:flex}
+.sheet .in{background:var(--card);width:100%;max-width:640px;border-radius:18px 18px 0 0;padding:16px 16px calc(16px + env(safe-area-inset-bottom));max-height:90vh;overflow:auto}
+.sheet h3{margin:0 0 6px}
+.acts{display:flex;gap:8px;margin-top:14px}
+.acts .btn{flex:1}
+pre.share{white-space:pre-wrap;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px;font:13px/1.4 ui-monospace,Menlo,monospace;max-height:45vh;overflow:auto;margin:8px 0 0}
+.note{font-size:12px;color:var(--mut);margin-top:8px}
+.rank{width:22px;text-align:center;font-weight:700;color:var(--mut)}
+.campo{margin:-4px 0 8px}
+.tsrow{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:6px 0}
+.tsel{border:2px solid transparent;background:none;cursor:pointer;font:900 20px/1 system-ui,sans-serif;color:#dc2626;letter-spacing:.5px;padding:8px 6px;border-radius:12px;text-align:left}
+.tsrow .tsel:nth-child(2){text-align:right}
+.tcor{font-size:13px;font-weight:900;white-space:nowrap}
+.tsel small{display:block;font-size:11px;font-weight:600;color:var(--mut);letter-spacing:0;margin-top:3px}
+.tsel.on{border-color:var(--c);background:var(--card)}
+.pitchWrap{position:relative;aspect-ratio:100/140;max-width:480px;margin:0 auto}
+.pitch{position:absolute;inset:0;width:100%;height:100%;box-shadow:0 2px 10px rgba(0,0,0,.2)}
+.vs i{display:inline-block;width:10px;height:10px;border-radius:50%;margin:0 4px;vertical-align:-1px}
+.vs{position:absolute;left:6px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.45);color:#fff;font-size:12px;font-weight:700;padding:3px 10px;border-radius:99px;pointer-events:none}
+.pl{touch-action:manipulation;user-select:none;-webkit-user-select:none;position:absolute;transform:translate(-50%,-30%);width:22%;display:flex;flex-direction:column;align-items:center;cursor:pointer}
+.av{width:42px;height:42px;border-radius:50%;border:3px solid #333;background:#f4f4f5;color:#1f2937;display:grid;place-items:center;font-weight:800;font-size:15px;object-fit:cover;box-shadow:0 2px 6px rgba(0,0,0,.35)}
+.av.livre{background:rgba(255,255,255,.12);border:2px dashed rgba(255,255,255,.6);box-shadow:none}
+.av.sm{width:34px;height:34px;font-size:12px;border-width:2px;flex:none}
+.av.big{width:72px;height:72px;font-size:24px}
+.pn{color:#fff;font-weight:800;font-size:12px;margin-top:2px;text-shadow:0 1px 3px rgba(0,0,0,.7);text-align:center;line-height:1.1;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pn.red{color:#ff3b3b}
+.pempty{position:absolute;left:10%;right:10%;transform:translateY(-50%);text-align:center;color:#fff;font-weight:600;text-shadow:0 1px 3px rgba(0,0,0,.6)}
+.legend{display:flex;gap:14px;justify-content:center;font-size:12px;color:var(--mut);margin-top:4px;flex-wrap:wrap}
+.lg i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;border:1px solid var(--line);vertical-align:-1px}
+@media(max-width:380px){.tcor{font-size:11px}.av{width:36px;height:36px;font-size:13px}.pn{font-size:11px}.tsel{font-size:18px}}
+body.ro main button.btn:not(.keep),body.ro main .seg,body.ro .adm,body.ro .admonly{display:none!important}
+body.ro main .chk{pointer-events:none}
+.banner{background:var(--ambl);color:var(--amb);border-radius:var(--r);padding:12px;margin-bottom:12px;font-size:14px}
+.hbtn{border:1px solid rgba(255,255,255,.5);background:rgba(255,255,255,.12);color:#fff;border-radius:99px;padding:5px 11px;font:600 12px system-ui;cursor:pointer}
+</style>
+</head>
+<body>
+<header>
+  <h1><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 7l4 3-1.5 5h-5L8 10z"/><path d="M12 2v5M22 10l-6 0M19 20l-4.5-5M5 20l4.5-5M2 10h6"/></svg>
+  <span id="hTitle">Pelada</span><span id="sync">carregando…</span></h1>
+  <div id="login" style="position:absolute;right:16px;bottom:12px"></div>
+  <div class="sub" id="hSub"></div>
+</header>
+<main id="app"></main>
+<nav id="nav"></nav>
+<div class="toast" id="toast"></div>
+<div class="sheet" id="sheet"><div class="in" id="sheetIn"></div></div>
+
+<script>
+// ---------- Estado ----------
+const POS=["Goleiro","Zagueiro","Lateral direito","Lateral esquerdo","Volante","Meio campo","Atacante","Linha"];
+const POS_LBL={Linha:"Linha (qualquer posição)"};
+const POS_OLD={Lateral:"Lateral direito",Meia:"Meio campo"};
+// coletes: times ímpares de amarelo, pares de verde (1º Amarelo x 2º Verde, 3º Amarelo x 4º Verde)
+const TEAM_COLORS=[["Amarelo","#eab308"],["Verde","#16a34a"],["Amarelo","#eab308"],["Verde","#16a34a"]];
+const TXT_COR={"#eab308":"#a16207","#16a34a":"#15803d"};
+const TN=i=>`${i+1}º Time (${TEAM_COLORS[i][0]})`;
+const uid=()=>Math.random().toString(36).slice(2,9);
+function nextSaturday(){const d=new Date();const add=(7-d.getDay())%7;d.setDate(d.getDate()+add);return iso(d)}
+function iso(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+function fmtDate(s){if(!s)return"";const [y,m,d]=s.split("-");const dt=new Date(+y,+m-1,+d);return dt.toLocaleDateString("pt-BR",{weekday:"short",day:"2-digit",month:"2-digit"})}
+const brl=v=>(v||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+const monthKey=s=>(s||iso(new Date())).slice(0,7);
+function monthLabel(k){const [y,m]=k.split("-");return new Date(+y,+m-1,1).toLocaleDateString("pt-BR",{month:"long",year:"numeric"})}
+
+function blank(){return{
+  v:2,
+  config:{nome:"Pelada de Domingo",local:"",horario:"08:00",vagas:22,valorMensal:80,valorAvulso:25,nTimes:2,porTime:11,modoTimes:"chegada",inicioCobranca:"2026-11"},
+  jogadores:[],
+  jogo:{data:nextSaturday(),status:{},ordem:[],chegada:[],fixo:null},
+  anterior:[],
+  times:[],
+  partidas:[],
+  pagMensal:{},
+  pagamentos:[],
+  pagAvulso:{},
+  lancamentos:[],
+  presencas:{},
+  jogos:[]
+}}
+let S=blank();
+let tab="jogo";
+let caixaMes=monthKey();
+let live=null; // partida em andamento
+// ---------- Acesso / Firebase ----------
+// FB é preenchido pelo módulo do Firebase (no fim da página). Sem configuração, o app funciona só neste aparelho.
+let FB=null,usuario=null,isAdmin=false,isDono=false,adminsDoc=null,remotoAtual=null,remotoCaixa=null,bancoVazio=false,loaded=false;
+const CAIXA_KEYS=["pagMensal","pagAvulso","lancamentos","pagamentos"];
+const RO=()=>!!FB&&!isAdmin;
+
+// ---------- Persistência ----------
+const LS="pelada-v1";
+function lsGet(){try{return JSON.parse(localStorage.getItem(LS))}catch(e){return null}}
+function lsSet(){try{const c=JSON.parse(JSON.stringify(S));if(RO())CAIXA_KEYS.forEach(k=>delete c[k]);localStorage.setItem(LS,JSON.stringify(c))}catch(e){}}
+let saveTimer=null,saving=false,dirty=false;
+function setSync(t){document.getElementById("sync").textContent=t}
+function commit(){
+  if(RO()){if(remotoAtual)S=merge(JSON.parse(JSON.stringify(remotoAtual)));render();toast("Somente administradores podem alterar");return}
+  render();lsSet();if(!FB)return;dirty=true;clearTimeout(saveTimer);saveTimer=setTimeout(flush,700);setSync("salvando…")}
+async function flush(){
+  if(saving||!dirty||!FB)return;saving=true;dirty=false;
+  const tudo=JSON.parse(JSON.stringify(S));const caixa={};CAIXA_KEYS.forEach(k=>{caixa[k]=tudo[k];delete tudo[k]});
+  try{await FB.salvar(tudo,caixa);bancoVazio=false;setSync("salvo ✓")}
+  catch(e){
+    if(e&&e.code==="permission-denied"){isAdmin=false;setSync("sem permissão");if(remotoAtual)S=merge(remotoAtual);render();toast("Sua conta não é administradora")}
+    else{dirty=true;setSync("sem conexão — tentando…");setTimeout(flush,3000+Math.random()*2000)}
+  }
+  saving=false;if(dirty)flush();
+}
+function merge(d){const b=blank();const o=Object.assign(b,d||{});o.config=Object.assign(blank().config,o.config||{});o.jogo=Object.assign(blank().jogo,o.jogo||{});(o.jogadores||[]).forEach(j=>{if(POS_OLD[j.pos])j.pos=POS_OLD[j.pos]});if((o.v||1)<2){o.config.porTime=11;if(o.config.vagas<22)o.config.vagas=22;o.v=2}
+  if(!Array.isArray(o.pagamentos))o.pagamentos=[];
+  Object.entries(o.pagMensal||{}).forEach(([k,m])=>Object.entries(m||{}).forEach(([jid,v])=>o.pagamentos.push({id:uid(),jid,valor:+v||0,data:k+"-01",obs:"Mensalidade "+k})));
+  o.pagMensal={};return o}
+function aplicarRemoto(){if(dirty||saving||!remotoAtual)return;const d=Object.assign({},remotoAtual||{});if(isAdmin&&remotoCaixa)Object.assign(d,remotoCaixa);S=merge(d);lsSet();render()}
+
+function init(){
+  const local=lsGet();if(local)S=merge(local);render();
+  if(window.FB_PRONTO)iniciarFirebase();else window.addEventListener("fb-pronto",iniciarFirebase,{once:true});
+  const semFB=()=>{if(!FB){setSync(window.FB_ERRO?"configure o Firebase":"salvo neste aparelho");render()}};
+  if(window.FB_ERRO)semFB();else window.addEventListener("fb-erro",semFB,{once:true});
+  setTimeout(semFB,6000);
+}
+function iniciarFirebase(){
+  FB=window.FB_API;if(!FB)return;setSync("conectando…");render();
+  FB.ouvirEstado(snap=>{loaded=true;
+    if(snap.existe){bancoVazio=false;if(snap.pendente)return;remotoAtual=snap.dados;aplicarRemoto();setSync(isAdmin?"sincronizado ✓":"atualizado ✓")}
+    else{bancoVazio=true;remotoAtual=null;setSync("banco vazio");render()}
+  },e=>setSync("offline"));
+  FB.aoLogar(async u=>{
+    usuario=u;isAdmin=false;isDono=false;adminsDoc=null;remotoCaixa=null;
+    if(u){
+      try{adminsDoc=await FB.lerAdmins()}catch(e){adminsDoc=null}
+      const em=(u.email||"").toLowerCase();
+      isDono=!!adminsDoc&&adminsDoc.dono===em;
+      isAdmin=isDono||(!!adminsDoc&&(adminsDoc.emails||[]).includes(em));
+      if(isAdmin)FB.ouvirCaixa(c=>{remotoCaixa=c||{};aplicarRemoto()});
+    }
+    if(!isAdmin&&!["jogo","times","campo","placar"].includes(tab))tab="jogo";
+    aplicarRemoto();render();
+  });
+}
+async function entrar(){try{await FB.entrar()}catch(e){toast("Não foi possível entrar: "+(e.code||e.message||e))}}
+async function sair(){await FB.sair();toast("Você saiu")}
+async function criarDono(){
+  try{const em=usuario.email.toLowerCase();await FB.salvarAdmins({dono:em,emails:[em]});adminsDoc={dono:em,emails:[em]};isDono=isAdmin=true;
+    FB.ouvirCaixa(c=>{remotoCaixa=c||{};aplicarRemoto()});render();toast("Pronto! Você é o dono do app")}
+  catch(e){toast("Sem permissão: confira o e-mail do dono nas regras do Firestore")}
+}
+async function importarIniciais(){
+  try{const r=await fetch("dados-iniciais.json",{cache:"no-store"});const d=await r.json();S=merge(d);commit();toast(S.jogadores.length+" jogadores importados")}
+  catch(e){toast("Não achei o arquivo dados-iniciais.json")}
+}
+function vAdmins(){
+  if(!isDono)return"";const a=adminsDoc||{emails:[]};
+  return `<div class="card"><h2>Administradores<span class="r">${a.emails.length}</span></h2>
+  <ul class="list">${a.emails.map(e=>`<li><div class="grow name">${esc(e)}</div>${e===a.dono?`<span class="pill g">dono</span>`:`<button class="btn ghost" onclick="remAdmin('${esc(e)}')">remover</button>`}</li>`).join("")}</ul>
+  <div class="row" style="margin-top:8px"><input id="novoAdm" type="email" placeholder="email@gmail.com"><button class="btn" onclick="addAdmin()">Adicionar</button></div>
+  <div class="note">Administradores entram com a conta Google desse e-mail e podem alterar tudo. Os demais só visualizam.</div></div>`;
+}
+async function addAdmin(){const em=($("#novoAdm").value||"").trim().toLowerCase();if(!/^\S+@\S+\.\S+$/.test(em)){toast("E-mail inválido");return}
+  const a={dono:adminsDoc.dono,emails:[...new Set([...(adminsDoc.emails||[]),em])]};try{await FB.salvarAdmins(a);adminsDoc=a;render();toast(em+" agora é administrador")}catch(e){toast("Erro ao salvar")}}
+async function remAdmin(em){const a={dono:adminsDoc.dono,emails:(adminsDoc.emails||[]).filter(x=>x!==em)};try{await FB.salvarAdmins(a);adminsDoc=a;render()}catch(e){toast("Erro ao salvar")}}
+function banners(){
+  let h="";
+  if(window.FB_ERRO&&!FB)h+=`<div class="banner">Firebase ainda não configurado: edite o arquivo <b>firebase-config.js</b> (veja o LEIAME). Por enquanto os dados ficam só neste aparelho.</div>`;
+  if(FB&&usuario&&!isAdmin){
+    if(!adminsDoc)h+=`<div class="banner">Primeiro acesso: se você é o dono do app, toque abaixo para se registrar como administrador principal.<br><br><button class="btn keep" onclick="criarDono()">Sou o dono — configurar</button></div>`;
+    else h+=`<div class="banner">Conectado como ${esc(usuario.email)}, mas este e-mail não é administrador. Você está no modo visualização.</div>`;
+  }
+  if(FB&&isAdmin&&bancoVazio)h+=`<div class="banner">O banco de dados está vazio. Importe o cadastro do app antigo:<br><br><button class="btn" onclick="importarIniciais()">Importar dados iniciais</button></div>`;
+  return h;
+}
+// ---------- Helpers ----------
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const P=id=>S.jogadores.find(j=>j.id===id);
+const stars=n=>"★".repeat(n)+"☆".repeat(5-n);
+function toast(t){const e=$("#toast");e.textContent=t;e.classList.add("on");clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove("on"),1800)}
+async function copy(t){try{await navigator.clipboard.writeText(t);toast("Copiado! Cole no WhatsApp")}catch(e){toast("Selecione o texto e copie")}}
+function openSheet(html){$("#sheetIn").innerHTML=html;$("#sheet").classList.add("on")}
+function closeSheet(){$("#sheet").classList.remove("on")}
+$("#sheet").addEventListener("click",e=>{if(e.target.id==="sheet")closeSheet()});
+function confirmar(msg,ok,label="Confirmar"){
+  openSheet(`<h3>${esc(msg)}</h3><div class="acts"><button class="btn sec" onclick="closeSheet()">Cancelar</button><button class="btn danger" id="okBtn">${label}</button></div>`);
+  $("#okBtn").onclick=()=>{closeSheet();ok()};
+}
+const ICON={
+ jogo:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M9 16l2 2 4-4"/></svg>',
+ times:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>',
+ placar:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/></svg>',
+ caixa:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="13" rx="2"/><circle cx="12" cy="12.5" r="2.5"/><path d="M6 10v.01M18 15v.01"/></svg>',
+ campo:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="1"/><path d="M4 12h16"/><circle cx="12" cy="12" r="2.5"/><path d="M9 2v3h6V2M9 22v-3h6v3"/></svg>',
+ elenco:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="4"/><path d="M2 21a7 7 0 0 1 14 0M16 4a4 4 0 0 1 0 8M22 21a7 7 0 0 0-4-6.3"/></svg>'
+};
+const TABS=[["jogo","Jogo"],["times","Times"],["campo","Campo"],["placar","Placar"],["caixa","Caixa"],["elenco","Elenco"]];
+
+// ---------- Render ----------
+function render(){
+  // no modo por chegada os times são sempre recalculados a partir da ordem de chegada (evita times desatualizados)
+  if((S.config.modoTimes||"chegada")==="chegada")syncTimesChegada();
+  $("#hTitle").textContent=S.config.nome||"Pelada";
+  $("#hSub").textContent=[fmtDate(S.jogo.data),S.config.horario,S.config.local].filter(Boolean).join(" · ")+(RO()?" · visualização":"");
+  document.body.classList.toggle("ro",RO());
+  const tabsVis=RO()?TABS.filter(([k])=>k!=="caixa"&&k!=="elenco"):TABS;
+  if(!tabsVis.some(([k])=>k===tab))tab="jogo";
+  $("#nav").innerHTML=tabsVis.map(([k,l])=>`<button class="${tab===k?"on":""}" onclick="go('${k}')">${ICON[k]}${l}</button>`).join("");
+  const v={jogo:vJogo,times:vTimes,campo:vCampo,placar:vPlacar,caixa:vCaixa,elenco:vElenco}[tab];
+  $("#app").innerHTML=banners()+v();
+  $("#login").innerHTML=!FB?"":usuario?`<button class="hbtn" onclick="sair()" title="${esc(usuario.email)}">${isAdmin?"Admin":"Visitante"} · Sair</button>`:`<button class="hbtn" onclick="entrar()">Entrar (admin)</button>`;
+}
+function go(t){tab=t;render();window.scrollTo(0,0)}
+
+// ---------- Jogo / presença ----------
+function lists(){
+  const st=S.jogo.status, ordem=S.jogo.ordem.filter(id=>st[id]==="sim"&&P(id));
+  const vagas=+S.config.vagas||0;
+  return{conf:ordem.slice(0,vagas),espera:ordem.slice(vagas),nao:S.jogadores.filter(j=>st[j.id]==="nao"),pend:S.jogadores.filter(j=>!st[j.id])};
+}
+function vJogo(){
+  if(!S.jogadores.length)return `<div class="card empty">Comece cadastrando a turma na aba <b>Elenco</b>.<br><br><button class="btn" onclick="go('elenco')">Cadastrar jogadores</button></div>`;
+  const L=lists(),vagas=+S.config.vagas||0;
+  const gk=L.conf.filter(id=>P(id).pos==="Goleiro").length;
+  const item=(j,status,extra="")=>`<li>
+    <button class="chk ${status==="sim"?"on":status==="nao"?"no":""}" onclick="toggleP('${j.id}')" aria-label="Alternar presença">${status==="nao"?"✕":"✓"}</button>
+    <div class="grow"><div class="name">${esc(j.nome)}</div><div class="meta">${j.pos}${j.tipo==="Avulso"?" · avulso":""}</div></div>${extra}</li>`;
+  return `
+  <div class="stats">
+    <div class="stat"><b>${L.conf.length}/${vagas}</b><span>confirmados</span></div>
+    <div class="stat"><b>${L.espera.length}</b><span>lista de espera</span></div>
+    <div class="stat"><b>${gk}</b><span>goleiros</span></div>
+  </div>
+  <div class="card"><h2>Confirmados<span class="r">toque no ✓ para alternar</span></h2>
+    ${L.conf.length?`<ul class="list">${L.conf.map((id,i)=>item(P(id),"sim",`<span class="rank">${i+1}</span>`)).join("")}</ul>`:`<div class="empty">Ninguém confirmou ainda.</div>`}
+  </div>
+  ${L.espera.length?`<div class="card"><h2>Lista de espera</h2><ul class="list">${L.espera.map((id,i)=>item(P(id),"sim",`<span class="pill amb">${i+1}º</span>`)).join("")}</ul></div>`:""}
+  ${L.pend.length?`<div class="card"><h2>Sem resposta<span class="r">${L.pend.length}</span></h2><ul class="list">${L.pend.map(j=>item(j,"",`<button class="btn ghost" onclick="setP('${j.id}','nao')">Não vai</button>`)).join("")}</ul></div>`:""}
+  ${L.nao.length?`<div class="card"><h2>Não vão</h2><ul class="list">${L.nao.map(j=>item(j,"nao")).join("")}</ul></div>`:""}
+  <div class="card">
+    <button class="btn full keep" onclick="shareLista()">Compartilhar lista no WhatsApp</button>
+    <div class="row" style="margin-top:8px"><button class="btn sec grow" onclick="editJogo()">Editar jogo</button><button class="btn sec grow" onclick="encerrar()">Encerrar e próximo</button></div>
+  </div>`;
+}
+function setP(id,v){const st=S.jogo.status;if(v)st[id]=v;else delete st[id];S.jogo.ordem=S.jogo.ordem.filter(x=>x!==id);if(v==="sim")S.jogo.ordem.push(id);commit()}
+function toggleP(id){const c=S.jogo.status[id];setP(id,c==="sim"?"nao":c==="nao"?null:"sim")}
+function txtLista(){
+  const L=lists();let t=`⚽ *${S.config.nome}*\n📅 ${fmtDate(S.jogo.data)} ${S.config.horario}${S.config.local?"\n📍 "+S.config.local:""}\n\n✅ *Confirmados (${L.conf.length}/${S.config.vagas})*\n`;
+  t+=L.conf.map((id,i)=>`${i+1}. ${P(id).nome}${P(id).pos==="Goleiro"?" 🧤":""}`).join("\n")||"—";
+  for(let i=L.conf.length;i<S.config.vagas;i++)t+=`\n${i+1}. `;
+  if(L.espera.length)t+=`\n\n⏳ *Espera*\n`+L.espera.map((id,i)=>`${i+1}. ${P(id).nome}`).join("\n");
+  if(L.nao.length)t+=`\n\n❌ *Não vão:* `+L.nao.map(j=>j.nome).join(", ");
+  return t;
+}
+function shareLista(){const t=txtLista();openSheet(`<h3>Lista da pelada</h3><pre class="share">${esc(t)}</pre><div class="acts"><button class="btn sec" onclick="closeSheet()">Fechar</button><button class="btn" id="cp">Copiar</button></div>`);$("#cp").onclick=()=>copy(t)}
+function editJogo(){
+  const c=S.config;
+  openSheet(`<h3>Configurações do jogo</h3>
+  <label>Nome da pelada</label><input id="f_nome" value="${esc(c.nome)}">
+  <label>Local</label><input id="f_local" value="${esc(c.local)}" placeholder="Ex.: Society do Zé">
+  <div class="grid2"><div><label>Data</label><input type="date" id="f_data" value="${S.jogo.data}"></div><div><label>Horário</label><input type="time" id="f_hor" value="${esc(c.horario)}"></div></div>
+  <div class="grid2"><div><label>Vagas</label><input type="number" id="f_vagas" value="${c.vagas}" min="2"></div><div><label>Nº de times</label><select id="f_nt">${[2,3,4].map(n=>`<option ${n==c.nTimes?"selected":""}>${n}</option>`).join("")}</select></div></div>
+  <label>Início da cobrança das mensalidades</label><input type="month" id="f_ini" value="${c.inicioCobranca||monthKey()}">
+  <div class="grid2"><div><label>Mensalidade (R$)</label><input type="number" id="f_vm" value="${c.valorMensal}" step="0.01"></div><div><label>Avulso por jogo (R$)</label><input type="number" id="f_va" value="${c.valorAvulso}" step="0.01"></div></div>
+  <div class="acts"><button class="btn sec" onclick="closeSheet()">Cancelar</button><button class="btn" onclick="saveJogo()">Salvar</button></div>`);
+}
+function saveJogo(){const c=S.config;c.nome=$("#f_nome").value.trim()||"Pelada";c.local=$("#f_local").value.trim();S.jogo.data=$("#f_data").value||S.jogo.data;c.horario=$("#f_hor").value;c.vagas=Math.max(2,+$("#f_vagas").value||20);c.nTimes=+$("#f_nt").value;c.valorMensal=+$("#f_vm").value||0;c.inicioCobranca=$("#f_ini").value||c.inicioCobranca;c.valorAvulso=+$("#f_va").value||0;closeSheet();commit()}
+function encerrar(){
+  const ch=(S.jogo.chegada||[]).filter(P);
+  confirmar("Encerrar o jogo de "+fmtDate(S.jogo.data)+"? "+(ch.length?"Os "+ch.length+" jogadores que chegaram passam a contar como \"jogaram o jogo anterior\"":"Os confirmados vão para o histórico")+" e a lista é zerada para a semana seguinte.",()=>{
+    const presentes=ch.length?ch:lists().conf;
+    presentes.forEach(id=>S.presencas[id]=(S.presencas[id]||0)+1);
+    S.jogos.push({data:S.jogo.data,presentes:presentes.slice()});
+    S.anterior=presentes.slice();S.anteriorData=S.jogo.data;
+    const [y,m,d]=S.jogo.data.split("-");const n=new Date(+y,+m-1,+d+7);
+    S.jogo={data:iso(n),status:{},ordem:[],chegada:[],fixo:null};S.times=[];commit();toast("Próximo jogo: "+fmtDate(S.jogo.data));
+  },"Encerrar");
+}
+
+// ---------- Times ----------
+const ordPos=p=>{const i=POS.indexOf(p);return i<0?99:i};
+const forca=t=>t.reduce((s,id)=>s+(P(id)?.nivel||0),0);
+// divide jogadores entre times equilibrando posição e nível; tie=desempate (aleatório no sorteio, estável na chegada)
+function distribuir(T,ids,tie){
+  ids.slice().sort((a,b)=>(ordPos(P(a).pos)-ordPos(P(b).pos))||(P(b).nivel-P(a).nivel)||tie(a,b)).forEach(id=>{
+    const pos=P(id).pos;const cnt=t=>t.filter(x=>P(x).pos===pos).length;
+    const tgt=T.slice().sort((a,b)=>(a.length-b.length)||(cnt(a)-cnt(b))||(forca(a)-forca(b))||(T.indexOf(a)-T.indexOf(b)))[0];tgt.push(id)});
+  T.forEach(t=>t.sort((a,b)=>ordPos(P(a).pos)-ordPos(P(b).pos)));return T;
+}
+function sortear(){
+  const ids=lists().conf;const n=+S.config.nTimes||2;
+  if(ids.length<n*2){toast("Confirme pelo menos "+n*2+" jogadores");return}
+  const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+  const gks=shuffle(ids.filter(id=>P(id).pos==="Goleiro"));
+  const rest=ids.filter(id=>P(id).pos!=="Goleiro");
+  const T=Array.from({length:n},()=>[]);
+  gks.forEach((id,i)=>{if(i<n)T[i].push(id);else rest.push(id)});
+  S.times=distribuir(T,rest,()=>Math.random()-.5);commit();toast("Times sorteados!");
+}
+
+// Regra da chegada: times 1 e 2 = quem jogou o jogo anterior (por ordem de chegada), divididos por posição.
+// Quem não jogou o anterior só completa os times 1 e 2 se faltar gente; o resto vai para os times 3 e 4 por ordem de chegada.
+function montarChegada(){
+  const N=11; // futebol de campo: 10 de linha + goleiro
+  const ch=(S.jogo.chegada||[]).filter(P);const ant=new Set(S.anterior||[]);
+  const idx=id=>ch.indexOf(id);
+  let T1,T2,sel;
+  if(S.jogo.fixo){[T1,T2]=S.jogo.fixo.map(t=>t.filter(P));sel=new Set([...T1,...T2])}
+  else{
+    const fila=[...ch.filter(id=>ant.has(id)),...ch.filter(id=>!ant.has(id))];
+    const gk=id=>P(id).pos==="Goleiro";
+    const gks=fila.filter(gk).slice(0,2);
+    const lin=fila.filter(id=>!gk(id)).slice(0,2*N-gks.length);
+    sel=new Set([...gks,...lin]);
+    const T=[[],[]];gks.forEach((id,i)=>T[i].push(id));
+    [T1,T2]=distribuir(T,lin,(a,b)=>idx(a)-idx(b));
+  }
+  // ordem manual dos times 3/4 (depois de uma troca); quem chegar depois entra no fim, por ordem de chegada
+  const om=(S.jogo.ordemResto||[]).filter(id=>ch.includes(id)&&!sel.has(id));
+  const resto=[...om,...ch.filter(id=>!sel.has(id)&&!om.includes(id))];
+  return{N,ch,ant,T:[T1,T2,resto.slice(0,N),resto.slice(N,2*N)],espera:resto.slice(2*N)};
+}
+function syncTimesChegada(){const M=montarChegada();const T=M.T.slice();while(T.length>2&&!T[T.length-1].length)T.pop();S.times=T}
+let busca="";
+function chegou(id){S.jogo.chegada=S.jogo.chegada||[];if(!S.jogo.chegada.includes(id))S.jogo.chegada.push(id);if(S.jogo.status[id]!=="sim")setPSilent(id);busca="";syncTimesChegada();commit()}
+function setPSilent(id){S.jogo.status[id]="sim";S.jogo.ordem=S.jogo.ordem.filter(x=>x!==id);S.jogo.ordem.push(id)}
+function saiu(id){S.jogo.chegada=(S.jogo.chegada||[]).filter(x=>x!==id);if(S.jogo.ordemResto)S.jogo.ordemResto=S.jogo.ordemResto.filter(x=>x!==id);if(S.jogo.fixo)S.jogo.fixo=S.jogo.fixo.map(t=>t.filter(x=>x!==id));syncTimesChegada();commit()}
+function travar(){const M=montarChegada();if(S.jogo.fixo){S.jogo.fixo=null;S.jogo.ordemResto=null;toast("Times destravados: voltam a seguir a ordem de chegada")}else{S.jogo.fixo=[M.T[0].slice(),M.T[1].slice()];toast("Times 1 e 2 travados")}syncTimesChegada();commit()}
+function filtrar(v){busca=v;const q=v.trim().toLowerCase();document.querySelectorAll("#porChegar li").forEach(li=>li.style.display=li.dataset.n.includes(q)?"":"none")}
+function teamCard(t,i,M,label){
+  const c=TEAM_COLORS[i];
+  return `<div class="team" style="border-left:5px solid ${c[1]}"><h3><span class="dot" style="background:${c[1]}"></span>${label||TN(i)}<span class="pill" style="margin-left:auto">${t.length}${M?"/"+M.N:""} · força ${forca(t)}</span></h3>
+  ${t.length?`<ul class="list">${t.filter(P).map(id=>`<li ${M?`ondblclick="substituir('${id}')" style="cursor:pointer"`:""}><div class="grow"><div class="name">${esc(P(id).nome)} ${P(id).pos==="Goleiro"?"🧤":""}</div><div class="meta">${P(id).pos}${M?` · chegou em ${M.ch.indexOf(id)+1}º`:""}</div></div>${M&&i<2&&!M.ant.has(id)?`<span class="pill amb">completou</span>`:`<span class="stars">${stars(P(id).nivel)}</span>`}</li>`).join("")}</ul>`:`<div class="meta">Aguardando jogadores…</div>`}</div>`;
+}
+function vTimes(){
+  const modo=S.config.modoTimes||"chegada";
+  let h=`<div class="seg" style="margin-bottom:12px">${[["chegada","Por chegada"],["sorteio","Sorteio livre"]].map(([k,l])=>`<button class="${k===modo?"on":""}" onclick="S.config.modoTimes='${k}';${k==="chegada"?"syncTimesChegada();":""}commit()">${l}</button>`).join("")}</div>`;
+  return h+(modo==="chegada"?vChegada():vSorteio());
+}
+function vChegada(){
+  if(!S.jogadores.length)return `<div class="card empty">Cadastre a turma na aba <b>Elenco</b> primeiro.</div>`;
+  const M=montarChegada();const nAnt=(S.anterior||[]).filter(P).length;
+  let h=`<div class="card"><h2>Jogo anterior${S.anteriorData?" · "+fmtDate(S.anteriorData):""}<span class="r">${nAnt} jogadores</span></h2>
+    <div class="meta">${nAnt?"Quem jogou o jogo anterior tem prioridade nos times 1 e 2. A lista é atualizada sozinha ao encerrar cada jogo.":"Primeira vez? Marque quem jogou o último jogo para o app aplicar a regra."}</div>
+    <button class="btn sec full" style="margin-top:8px" onclick="editAnterior()">${nAnt?"Ajustar quem jogou o anterior":"Marcar quem jogou o anterior"}</button></div>`;
+  // quem ainda não chegou: confirmados primeiro, depois o resto
+  const st=S.jogo.status;const falta=S.jogadores.filter(j=>!M.ch.includes(j.id))
+    .sort((a,b)=>((st[b.id]==="sim")-(st[a.id]==="sim"))||a.nome.localeCompare(b.nome,"pt-BR"));
+  h+=`<div class="card adm"><h2>Quem chegou?<span class="r">${M.ch.length} no campo</span></h2>
+    <input id="busca" placeholder="Buscar jogador…" value="${esc(busca)}" oninput="filtrar(this.value)" autocomplete="off">
+    <ul class="list" id="porChegar" style="max-height:320px;overflow:auto;margin-top:6px">${falta.map(j=>`<li data-n="${esc(j.nome.toLowerCase())}"><div class="grow"><div class="name">${esc(j.nome)} ${j.pos==="Goleiro"?"🧤":""}</div><div class="meta">${j.pos}${st[j.id]==="sim"?" · confirmado":""}</div></div>${M.ant.has(j.id)?`<span class="pill g">jogou anterior</span>`:`<span class="pill">não jogou</span>`}<button class="btn" style="padding:7px 12px" onclick="chegou('${j.id}')">Chegou</button></li>`).join("")||`<li class="meta">Todo mundo já chegou.</li>`}</ul></div>`;
+  const fixo=!!S.jogo.fixo;
+  h+=`<div class="card"><div class="row"><div class="grow"><b>Times 1 e 2 ${fixo?"travados 🔒":"em formação"}</b><div class="meta">${fixo?"Quem chegar agora vai para os times 3 e 4. Trocas feitas no Campo ficam mantidas.":"Mudam conforme a turma do jogo anterior vai chegando. Trave quando for começar."}</div></div><button class="btn ${fixo?"sec":""}" onclick="travar()">${fixo?"Destravar":"Travar"}</button></div></div>`;
+  h+=M.T.map((t,i)=>teamCard(t,i,M,TN(i))).join("");
+  if(M.espera.length)h+=`<div class="card"><h2>Próximos (fora dos 4 times)</h2><ul class="list">${M.espera.map((id,i)=>`<li><span class="rank">${i+1}</span><div class="grow name">${esc(P(id).nome)}</div></li>`).join("")}</ul></div>`;
+  if(M.ch.length)h+=`<div class="card"><h2>Ordem de chegada</h2><ul class="list">${M.ch.map((id,i)=>`<li><span class="rank">${i+1}</span><div class="grow"><div class="name">${esc(P(id).nome)}</div><div class="meta">${P(id).pos}</div></div>${M.ant.has(id)?`<span class="pill g">anterior</span>`:""}<button class="btn ghost" onclick="saiu('${id}')">desfazer</button></li>`).join("")}</ul></div>`;
+  h+=`<div class="card"><div class="meta">Futebol de campo: 11 por time (goleiro + 10 de linha, esquema 4-4-2).</div>
+    <button class="btn full keep" style="margin-top:10px" onclick="shareTimes()">Compartilhar times</button></div>`;
+  return h;
+}
+function addDays(s,n){const [y,m,d]=s.split("-");return iso(new Date(+y,+m-1,+d+n))}
+const normNome=s=>s.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().trim();
+function parseNomes(txt){return txt.split(/\n|,/).map(l=>{const gk=/🧤|\bgol(eiro)?\b/i.test(l);
+  const nome=l.replace(/🧤/g,"").replace(/\(?\bgol(eiro)?\b\)?/ig,"").replace(/^[\s\d.\-–)*•✅]+/,"").replace(/[^\p{L}\p{N} .'\-]/gu,"").trim();
+  return{nome,gk}}).filter(x=>x.nome)}
+// acha ou cadastra; devolve o id
+function acharOuCriar({nome,gk}){const k=normNome(nome);let j=S.jogadores.find(x=>normNome(x.nome)===k);
+  if(!j){j={id:uid(),nome,pos:gk?"Goleiro":"Linha",nivel:3,tipo:"Mensalista"};S.jogadores.push(j)}return j.id}
+function editAnterior(){
+  const ant=new Set(S.anterior||[]);
+  const dAnt=S.anteriorData||addDays(S.jogo.data,-7);
+  const js=S.jogadores.slice().sort((a,b)=>a.nome.localeCompare(b.nome,"pt-BR"));
+  openSheet(`<h3>Quem jogou o jogo anterior?</h3>
+  <div class="grid2"><div><label>Jogo anterior</label><input type="date" id="a_dt" value="${dAnt}"></div><div><label>Próximo jogo</label><input type="date" id="a_prox" value="${S.jogo.data}"></div></div>
+  <label>Toque em quem jogou <span id="aCnt"></span></label>
+  <div class="row" style="gap:6px"><input id="a_bus" placeholder="Buscar…" oninput="const q=normNome(this.value);document.querySelectorAll('#antL li').forEach(li=>li.style.display=li.dataset.n.includes(q)?'':'none')"><button class="btn sec" style="padding:8px 10px" id="a_tod">Todos</button><button class="btn sec" style="padding:8px 10px" id="a_lim">Limpar</button></div>
+  ${js.length?`<ul class="list" id="antL" style="margin-top:6px;max-height:40vh;overflow:auto">${js.map(j=>`<li data-n="${esc(normNome(j.nome))}"><button class="chk ${ant.has(j.id)?"on":""}" data-id="${j.id}">✓</button><div class="grow"><div class="name">${esc(j.nome)} ${j.pos==="Goleiro"?"🧤":""}</div><div class="meta">${j.pos}</div></div></li>`).join("")}</ul>`:`<ul class="list" id="antL"></ul><div class="meta">Nenhum jogador cadastrado ainda — cole os nomes abaixo.</div>`}
+  <label>Faltou alguém ou ainda não está cadastrado? Cole os nomes (um por linha, pode ser a lista do WhatsApp)</label>
+  <textarea id="a_txt" rows="4" placeholder="1. João&#10;2. Pedro 🧤"></textarea>
+  <div class="note">Nomes novos entram no Elenco como "Linha" — depois ajuste a posição de cada um.</div>
+  <div class="acts"><button class="btn sec" onclick="closeSheet()">Cancelar</button><button class="btn" id="okA">Salvar</button></div>`);
+  const cnt=()=>$("#aCnt").textContent="("+document.querySelectorAll("#antL .chk.on").length+" marcados)";cnt();
+  document.querySelectorAll("#antL .chk").forEach(b=>b.onclick=()=>{b.classList.toggle("on");cnt()});
+  $("#a_tod").onclick=()=>{document.querySelectorAll("#antL li").forEach(li=>{if(li.style.display!=="none")li.querySelector(".chk").classList.add("on")});cnt()};
+  $("#a_lim").onclick=()=>{document.querySelectorAll("#antL .chk").forEach(b=>b.classList.remove("on"));cnt()};
+  $("#okA").onclick=()=>{
+    const ids=new Set([...document.querySelectorAll("#antL .chk.on")].map(b=>b.dataset.id));
+    const antes=S.jogadores.length;parseNomes($("#a_txt").value).forEach(x=>ids.add(acharOuCriar(x)));
+    S.anterior=[...ids];S.anteriorData=$("#a_dt").value||dAnt;
+    if($("#a_prox").value)S.jogo.data=$("#a_prox").value;
+    closeSheet();syncTimesChegada();commit();
+    const novos=S.jogadores.length-antes;
+    toast(S.anterior.length+" jogaram em "+fmtDate(S.anteriorData)+(novos?" · "+novos+" novos no elenco":""));
+  };
+}
+function vSorteio(){
+  const conf=lists().conf.length,n=S.config.nTimes;
+  let h=`<div class="card"><h2>Sorteio de times<span class="r">${conf} confirmados</span></h2>
+   <div class="seg" style="margin-bottom:10px">${[2,3,4].map(k=>`<button class="${k==n?"on":""}" onclick="S.config.nTimes=${k};commit()">${k} times</button>`).join("")}</div>
+   <button class="btn full" onclick="sortear()">${S.times.length?"Sortear de novo":"Sortear times"}</button>
+   <div class="note">Sorteia entre os confirmados, equilibrando nível e posições e com um goleiro por time.</div></div>`;
+  if(!S.times.length)return h+`<div class="card empty">Os times aparecem aqui depois do sorteio.</div>`;
+  h+=S.times.map((t,i)=>teamCard(t,i)).join("");
+  return h+`<button class="btn full keep" onclick="shareTimes()">Compartilhar times</button>`;
+}
+function shareTimes(){
+  const emo=["🟡","🟢","🟡","🟢"];const ch=(S.config.modoTimes||"chegada")==="chegada";
+  const t=`⚽ *Times – ${fmtDate(S.jogo.data)}*\n\n`+S.times.map((tm,i)=>`${emo[i]} *${TN(i)}*\n`+(tm.filter(P).map(id=>"• "+P(id).nome+(P(id).pos==="Goleiro"?" 🧤":"")+" ("+P(id).pos+")").join("\n")||"—")).join("\n\n");
+  openSheet(`<h3>Times</h3><pre class="share">${esc(t)}</pre><div class="acts"><button class="btn sec" onclick="closeSheet()">Fechar</button><button class="btn" id="cp">Copiar</button></div>`);$("#cp").onclick=()=>copy(t);
+}
+
+// ---------- Campo ----------
+let campoTime=0;
+const ini=n=>n.replace(/[^\p{L}\s]/gu," ").split(/\s+/).filter(Boolean).slice(0,2).map(w=>w[0]).join("").toUpperCase();
+function avatar(j,cor,cls="av"){return j.foto?`<img class="${cls}" src="${j.foto}" style="border-color:${cor}" alt="">`:`<div class="${cls}" style="border-color:${cor}">${esc(ini(j.nome))}</div>`}
+// formação por nº de jogadores de linha (defesa, meio, ataque); com 10 de linha = 4-4-2
+const FORM={1:[0,1,0],2:[1,0,1],3:[1,1,1],4:[2,1,1],5:[2,2,1],6:[2,2,2],7:[3,2,2],8:[3,3,2],9:[4,3,2],10:[4,4,2]};
+const LE="Lateral esquerdo",LD="Lateral direito",ZG="Zagueiro",VO="Volante",MC="Meio campo",AT="Atacante";
+const XS={1:[50],2:[30,70],3:[18,50,82],4:[12,37,63,88],5:[10,30,50,70,90],6:[8,25,42,58,75,92]};
+// preferência de posição para cada vaga (quanto mais cedo na lista, melhor)
+function prefs(linha,k,i){
+  const edge=k>=3&&(i===0||i===k-1),left=i===0;
+  if(linha==="d")return edge?(left?[LE,LD,ZG,VO,"Linha",MC,AT]:[LD,LE,ZG,VO,"Linha",MC,AT]):[ZG,VO,LE,LD,"Linha",MC,AT];
+  if(linha==="m")return edge&&k>=4?(left?[MC,LE,AT,"Linha",VO,LD,ZG]:[MC,LD,AT,"Linha",VO,LE,ZG]):(i===Math.floor((k-1)/2)||k<3?[VO,MC,"Linha",ZG,AT,LE,LD]:[MC,VO,"Linha",AT,ZG,LE,LD]);
+  return[AT,MC,"Linha",VO,LE,LD,ZG];
+}
+// distribui o time na metade de baixo do campo (y 70-140); o adversário é espelhado
+function escalar(ids){
+  ids=ids.filter(P);const gk=ids.find(id=>P(id).pos==="Goleiro");
+  const lin=ids.filter(id=>id!==gk);const n=lin.length;
+  let f=[4,4,2];if(n>10){f=[4,4+(n-10)-Math.floor((n-10)/2),2+Math.floor((n-10)/2)]}
+  const Y={d:112,m:96,a:81};const slots=[];
+  [["d",f[0]],["m",f[1]],["a",f[2]]].forEach(([l,k])=>{const xs=XS[k]||XS[6];for(let i=0;i<k;i++)slots.push({l,x:xs[i],y:Y[l]+(l==="m"&&k>=4&&(i===0||i===k-1)?-4:0),pref:prefs(l,k,i)})});
+  const pairs=[];slots.forEach((s,si)=>lin.forEach((id,pi)=>{const c=s.pref.indexOf(P(id).pos);pairs.push([c<0?9:c,-P(id).nivel,si,id])}));
+  pairs.sort((a,b)=>a[0]-b[0]||a[1]-b[1]);const usedS=new Set,usedP=new Set,out=[];
+  // vagas mais importantes primeiro quando o time está incompleto: zagueiros, volante, atacantes…
+  pairs.forEach(([c,_,si,id])=>{if(usedS.has(si)||usedP.has(id))return;usedS.add(si);usedP.add(id);out.push({id,x:slots[si].x,y:slots[si].y})});
+  slots.forEach((sl,si)=>{if(!usedS.has(si))out.push({livre:true,x:sl.x,y:sl.y})});
+  out.push(gk?{id:gk,x:50,y:127}:{vazio:true,x:50,y:127});
+  return out;
+}
+const PITCH=`<svg class="pitch" viewBox="0 0 100 140" preserveAspectRatio="none">
+  <defs><pattern id="stripes" width="100" height="20" patternUnits="userSpaceOnUse"><rect width="100" height="10" fill="#0f9d48"/><rect y="10" width="100" height="10" fill="#0c8f41"/></pattern></defs>
+  
+  <rect x="0" y="0" width="100" height="140" fill="url(#stripes)" stroke="rgba(255,255,255,.9)" stroke-width="1"/>
+  <g fill="none" stroke="rgba(255,255,255,.8)" stroke-width=".5">
+    <line x1="0" y1="70" x2="100" y2="70"/><circle cx="50" cy="70" r="11"/>
+    <rect x="24" y="0" width="52" height="20"/><rect x="38" y="0" width="24" height="7"/><path d="M41 20 A10 10 0 0 0 59 20"/>
+    <rect x="24" y="120" width="52" height="20"/><rect x="38" y="133" width="24" height="7"/><path d="M41 120 A10 10 0 0 1 59 120"/>
+  </g><circle cx="50" cy="70" r=".8" fill="#fff"/></svg>`;
+function vCampo(){
+  const ch=(S.config.modoTimes||"chegada")==="chegada";
+  const nT=ch?4:Math.max(S.times.length,2);
+  if(campoTime>=nT)campoTime=0;
+  // 1º x 2º e 3º x 4º: o time de número ímpar fica embaixo
+  const baixo=campoTime-campoTime%2,cima=baixo+1;
+  const ant=new Set(S.anterior||[]);
+  const btn=i=>i<nT?`<button class="tsel ${i===baixo||i===cima?"on":""}" style="--c:${TEAM_COLORS[i][1]}" onclick="campoTime=${i};render()">${i+1}º TIME <span class="tcor" style="color:${TXT_COR[TEAM_COLORS[i][1]]}">(${TEAM_COLORS[i][0].toUpperCase()})</span><small>${(S.times[i]||[]).filter(P).length} jogadores</small></button>`:`<span></span>`;
+  const draw=(t,topo)=>{const ids=(S.times[t]||[]).filter(P);if(!ids.length)return`<div class="pempty" style="top:${topo?"28%":"72%"}">${t+1}º time sem jogadores</div>`;
+    const cor=TEAM_COLORS[t][1];
+    return escalar(ids).map(p=>{const x=topo?100-p.x:p.x,y=topo?140-p.y:p.y;const st=`left:${x}%;top:${y/1.4}%`;
+      if(p.livre)return `<div class="pl" style="${st}"><div class="av livre"></div></div>`;
+      if(p.vazio)return `<div class="pl" style="${st}"><div class="av" style="border-color:${cor};opacity:.6">?</div><div class="pn">GOLEIRO</div></div>`;
+      const j=P(p.id);const red=ch&&t<2&&!ant.has(p.id);
+      return `<div class="pl" style="${st}" onclick="tapJog('${p.id}',${t})">${avatar(j,cor)}<div class="pn ${red?"red":""}">${esc(j.nome)}</div></div>`}).join("")};
+  return `<div class="campo">
+    <div class="tsrow">${btn(1)}${btn(3)}</div>
+    <div class="pitchWrap">${PITCH}${cima<nT?draw(cima,true):""}${draw(baixo,false)}
+      <div class="vs"><i style="background:${TEAM_COLORS[baixo][1]}"></i>x<i style="background:${TEAM_COLORS[cima][1]}"></i></div></div>
+    <div class="tsrow">${btn(0)}${btn(2)}</div>
+    ${ch?`<div class="legend"><span class="lg"><i style="background:#fff"></i>jogou o anterior</span><span class="lg"><i style="background:#ef4444"></i>completou (não jogou o anterior)</span></div>`:""}
+    <div class="note" style="text-align:center">Toque em um time para ver o confronto (1º x 2º ou 3º x 4º). <b>Dois toques no jogador</b> para substituir, trocar de time ou retirar; um toque mostra os detalhes.</div></div>`;
+}
+function infoJog(id){const j=P(id);const ant=(S.anterior||[]).includes(id);const pos=(S.jogo.chegada||[]).indexOf(id);
+  openSheet(`<div class="row">${avatar(j,TEAM_COLORS[campoTime][1],"av big")}<div class="grow"><h3 style="margin:0">${esc(j.nome)}</h3><div class="meta">${j.pos} · ${j.tipo}</div><div class="stars">${stars(j.nivel)}</div></div></div>
+  <div class="meta" style="margin-top:10px">${ant?"✅ Jogou o jogo anterior":"⚠️ Não jogou o jogo anterior"}${pos>=0?` · chegou em ${pos+1}º`:""}</div>
+  <div class="acts"><button class="btn sec" onclick="closeSheet()">Fechar</button><button class="btn admonly" onclick="closeSheet();editJog('${id}')">Editar / foto</button></div>`)}
+// ---------- Substituições (dois toques no jogador) ----------
+let _tap={id:null,t:0,timer:null};
+function tapJog(id,t){
+  campoTime=t;const now=Date.now();
+  if(_tap.id===id&&now-_tap.t<400){clearTimeout(_tap.timer);_tap={id:null,t:0,timer:null};substituir(id);return}
+  clearTimeout(_tap.timer);_tap={id,t:now,timer:setTimeout(()=>{_tap.id=null;infoJog(id)},400)};
+}
+function ondeEsta(id,M){for(let i=0;i<4;i++)if(M.T[i].includes(id))return i;return M.espera.includes(id)?4:-1}
+function garantirManual(M){
+  if(!S.jogo.fixo)S.jogo.fixo=[M.T[0].slice(),M.T[1].slice()];
+  S.jogo.ordemResto=[...M.T[2],...M.T[3],...M.espera];
+}
+function trocar(a,b){
+  const M=montarChegada();garantirManual(M);
+  const L=[S.jogo.fixo[0],S.jogo.fixo[1],S.jogo.ordemResto];
+  const pos=id=>{for(const arr of L){const i=arr.indexOf(id);if(i>=0)return[arr,i]}return null};
+  const pa=pos(a),pb=pos(b);if(!pa||!pb)return;
+  pa[0][pa[1]]=b;pb[0][pb[1]]=a;
+  closeSheet();syncTimesChegada();commit();toast(P(a).nome+" ⇄ "+P(b).nome);
+}
+function retirar(id,comProximo){
+  const M=montarChegada();const w=ondeEsta(id,M);garantirManual(M);
+  let entrou=null;
+  if(comProximo&&w<2){const fila=S.jogo.ordemResto.filter(x=>x!==id);entrou=fila[0];
+    if(entrou){const t=S.jogo.fixo[w];t[t.indexOf(id)]=entrou;S.jogo.ordemResto=fila.slice(1)}}
+  S.jogo.chegada=S.jogo.chegada.filter(x=>x!==id);
+  S.jogo.fixo=S.jogo.fixo.map(t=>t.filter(x=>x!==id));S.jogo.ordemResto=S.jogo.ordemResto.filter(x=>x!==id);
+  closeSheet();syncTimesChegada();commit();toast(P(id).nome+" saiu"+(entrou?" · entrou "+P(entrou).nome:""));
+}
+function substituir(id){
+  if(RO()){infoJog(id);return}
+  if((S.config.modoTimes||"chegada")!=="chegada"){infoJog(id);return}
+  const M=montarChegada();const w=ondeEsta(id,M);if(w<0)return;
+  const j=P(id);const adv=w<4?(w%2===0?w+1:w-1):-1;
+  const item=(x,lbl)=>`<li onclick="trocar('${id}','${x}')" style="cursor:pointer">${avatar(P(x),TEAM_COLORS[ondeEsta(x,M)]?.[1]||"#999","av sm")}<div class="grow"><div class="name">${esc(P(x).nome)}</div><div class="meta">${P(x).pos}${lbl?" · "+lbl:""}</div></div><span class="pill g">trocar</span></li>`;
+  const sec=(tit,ids,lbl)=>ids.length?`<div class="meta" style="margin:12px 0 2px;font-weight:700;color:var(--ink)">${tit}</div><ul class="list">${ids.map(x=>item(x,lbl&&lbl(x))).join("")}</ul>`:"";
+  const outros=[0,1,2,3].filter(i=>i!==w&&i!==adv).flatMap(i=>M.T[i]);
+  const lblT=x=>{const i=ondeEsta(x,M);return i<4?TN(i):"próximo da fila"};
+  const prox=w<2?[...M.T[2],...M.T[3],...M.espera].filter(x=>x!==id)[0]:null;
+  openSheet(`<div class="row">${avatar(j,TEAM_COLORS[w]?.[1]||"#999","av big")}<div class="grow"><h3 style="margin:0">${esc(j.nome)}</h3><div class="meta">${j.pos} · ${w<4?TN(w):"próximo da fila"}</div></div></div>
+  <div style="max-height:55vh;overflow:auto;margin-top:6px">
+  ${adv>=0?sec("Substituir por jogador do "+TN(adv),M.T[adv]):""}
+  ${sec("Substituir por jogador de outro time",outros,lblT)}
+  ${sec("Substituir por quem está fora dos times",M.espera.filter(x=>x!==id))}
+  </div>
+  <div class="acts" style="flex-wrap:wrap">${prox?`<button class="btn sec" style="flex-basis:100%" onclick="retirar('${id}',true)">Retirar e entrar ${esc(P(prox).nome)} (próximo da fila)</button>`:""}
+  <button class="btn sec" onclick="closeSheet()">Cancelar</button><button class="btn danger" onclick="retirar('${id}',false)">Retirar do jogo</button></div>
+  <div class="note">As trocas travam os times 1 e 2 (para não serem refeitos sozinhos). Para voltar à ordem de chegada, use "Destravar" na aba Times.</div>`);
+}
+// reduz a foto para 96x96 (fica leve para salvar)
+function lerFoto(file){return new Promise((ok,err)=>{const img=new Image();const u=URL.createObjectURL(file);img.onload=()=>{const c=document.createElement("canvas");c.width=c.height=96;const s=Math.min(img.width,img.height);c.getContext("2d").drawImage(img,(img.width-s)/2,(img.height-s)/2,s,s,0,0,96,96);URL.revokeObjectURL(u);ok(c.toDataURL("image/jpeg",.72))};img.onerror=err;img.src=u})}
+
+// ---------- Placar ----------
+function vPlacar(){
+  let h="";
+  if(live){
+    const A=live.a,B=live.b;const cA=TEAM_COLORS[A],cB=TEAM_COLORS[B];
+    const g=k=>live.gols.filter(x=>x.t===k).length;
+    const roster=k=>(S.times[k]||[]).filter(P);
+    h+=`<div class="card"><h2>Partida em andamento</h2>
+     <div class="score"><div><small style="color:${cA[1]}">${TN(A)}</small>${g(A)}</div>×<div><small style="color:${cB[1]}">${TN(B)}</small>${g(B)}</div></div>
+     <div class="grid2">${[A,B].map(k=>`<div><label>Gol do ${TN(k)}</label>${roster(k).map(id=>`<button class="btn sec full" style="margin-bottom:6px;font-weight:500;padding:8px" onclick="gol(${k},'${id}')">⚽ ${esc(P(id).nome)}</button>`).join("")}<button class="btn sec full" style="font-weight:500;padding:8px" onclick="gol(${k},'')">⚽ Gol contra/outro</button></div>`).join("")}</div>
+     ${live.gols.length?`<div class="note">Gols: ${live.gols.map((x,i)=>`${esc(x.j?P(x.j)?.nome:"outro")} (${TN(x.t)})`).join(", ")} · <a href="#" onclick="live.gols.pop();render();return false">desfazer último</a></div>`:""}
+     <div class="acts"><button class="btn sec" onclick="live=null;render()">Descartar</button><button class="btn" onclick="fimPartida()">Fim de jogo</button></div></div>`;
+  }else{
+    if(S.times.length>=2){
+      h+=`<div class="card"><h2>Nova partida</h2><div class="grid2">
+        <div><label>Time A</label><select id="pa">${S.times.map((_,i)=>`<option value="${i}">${TN(i)}</option>`).join("")}</select></div>
+        <div><label>Time B</label><select id="pb">${S.times.map((_,i)=>`<option value="${i}" ${i==1?"selected":""}>${TN(i)}</option>`).join("")}</select></div></div>
+        <button class="btn full" style="margin-top:10px" onclick="iniciar()">Começar partida</button></div>`;
+    }else h+=`<div class="card empty">Sorteie os times para registrar partidas.<br><br><button class="btn" onclick="go('times')">Ir para Times</button></div>`;
+  }
+  // artilharia
+  const gols={};S.partidas.forEach(p=>p.gols.forEach(x=>{if(x.j)gols[x.j]=(gols[x.j]||0)+1}));
+  const art=Object.entries(gols).filter(([id])=>P(id)).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  h+=`<div class="card"><h2>🏆 Artilharia<span class="r">${S.partidas.length} partidas</span></h2>${art.length?`<ul class="list">${art.map(([id,n],i)=>`<li><span class="rank">${i+1}</span><div class="grow name">${esc(P(id).nome)}</div><b>${n}</b></li>`).join("")}</ul>`:`<div class="empty">Nenhum gol registrado.</div>`}</div>`;
+  const pres=Object.entries(S.presencas).filter(([id])=>P(id)).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  h+=`<div class="card"><h2>📅 Mais presentes<span class="r">${S.jogos.length} jogos</span></h2>${pres.length?`<ul class="list">${pres.map(([id,n],i)=>`<li><span class="rank">${i+1}</span><div class="grow name">${esc(P(id).nome)}</div><b>${n}</b></li>`).join("")}</ul>`:`<div class="empty">Conta ao encerrar cada jogo.</div>`}</div>`;
+  if(S.partidas.length){
+    h+=`<div class="card"><h2>Últimas partidas</h2><ul class="list">${S.partidas.slice(-8).reverse().map(p=>{const ga=p.gols.filter(x=>x.t===p.a).length,gb=p.gols.filter(x=>x.t===p.b).length;return`<li><div class="grow"><div class="name">${TN(p.a)} ${ga} × ${gb} ${TN(p.b)}</div><div class="meta">${fmtDate(p.data)}</div></div><button class="btn ghost" onclick="delPartida('${p.id}')">remover</button></li>`}).join("")}</ul></div>`;
+  }
+  return h;
+}
+function iniciar(){const a=+$("#pa").value,b=+$("#pb").value;if(a===b){toast("Escolha times diferentes");return}live={a,b,gols:[]};render()}
+function gol(t,j){live.gols.push({t,j});render()}
+function fimPartida(){S.partidas.push({id:uid(),data:S.jogo.data,a:live.a,b:live.b,gols:live.gols});live=null;commit();toast("Partida salva")}
+function delPartida(id){confirmar("Remover esta partida?",()=>{S.partidas=S.partidas.filter(p=>p.id!==id);commit()},"Remover")}
+
+// ---------- Caixa ----------
+function totais(){
+  let ent=0,sai=0;
+  // valores gravados no momento do pagamento
+  (S.pagamentos||[]).forEach(p=>ent+=+p.valor||0);
+  Object.values(S.pagAvulso).forEach(m=>Object.values(m).forEach(v=>ent+=v));
+  S.lancamentos.forEach(l=>l.valor>=0?ent+=l.valor:sai+=-l.valor);
+  return{ent,sai,saldo:ent-sai};
+}
+function vCaixa(){
+  const T=totais();const k=caixaMes;
+  const mens=S.jogadores.filter(j=>j.tipo==="Mensalista");
+  // avulsos presentes nos jogos deste mês (jogos encerrados + jogo atual)
+  const jogosMes=S.jogos.filter(g=>monthKey(g.data)===k).map(g=>({data:g.data,ids:g.presentes}));
+  if(monthKey(S.jogo.data)===k)jogosMes.push({data:S.jogo.data,ids:lists().conf,atual:true});
+  const lanc=S.lancamentos.filter(l=>monthKey(l.data)===k);
+  return `
+  <div class="stats">
+    <div class="stat"><b style="color:var(--g)">${brl(T.ent)}</b><span>entradas</span></div>
+    <div class="stat"><b style="color:var(--red)">${brl(T.sai)}</b><span>saídas</span></div>
+    <div class="stat"><b>${brl(T.saldo)}</b><span>saldo do caixa</span></div>
+  </div>
+  <div class="card row" style="justify-content:space-between;padding:8px">
+    <button class="mini" onclick="shiftMes(-1)">‹</button><b style="text-transform:capitalize">${monthLabel(k)}</b><button class="mini" onclick="shiftMes(1)">›</button>
+  </div>
+  ${vMensalistas(mens)}
+  <div class="card"><h2>Avulsos<span class="r">${brl(S.config.valorAvulso)} por jogo</span></h2>
+    ${jogosMes.map(g=>{const av=g.ids.filter(id=>P(id)&&P(id).tipo==="Avulso");const pa=S.pagAvulso[g.data]||{};
+      return av.length?`<div class="meta" style="margin-top:6px">${fmtDate(g.data)}${g.atual?" (próximo)":""}</div><ul class="list">${av.map(id=>`<li><button class="chk ${pa[id]?"on":""}" onclick="payA('${g.data}','${id}')">✓</button><div class="grow name">${esc(P(id).nome)}</div>${pa[id]?`<span class="pill g">${brl(pa[id])}</span>`:`<span class="pill red">pendente</span>`}</li>`).join("")}</ul>`:""}).join("")||`<div class="empty">Nenhum avulso confirmado neste mês.</div>`}
+  </div>
+  <div class="card"><h2>Outros lançamentos</h2>
+    ${lanc.length?`<ul class="list">${lanc.map(l=>`<li><div class="grow"><div class="name">${esc(l.desc)}</div><div class="meta">${fmtDate(l.data)}</div></div><b style="color:${l.valor<0?"var(--red)":"var(--g)"}">${brl(l.valor)}</b><button class="btn ghost" onclick="delLanc('${l.id}')">✕</button></li>`).join("")}</ul>`:`<div class="empty">Aluguel do campo, bola, coletes…</div>`}
+    <div class="row" style="margin-top:8px"><button class="btn danger grow" onclick="novoLanc(-1)">− Despesa</button><button class="btn sec grow" onclick="novoLanc(1)">+ Entrada</button></div>
+  </div>`;
+}
+function shiftMes(d){const [y,m]=caixaMes.split("-");caixaMes=monthKey(iso(new Date(+y,+m-1+d,1)));render()}
+// ---------- Mensalidades por valor pago ----------
+const addMes=(k,n)=>{const [y,m]=k.split("-");return monthKey(iso(new Date(+y,+m-1+n,1)))};
+const mesesEntre=(a,b)=>{const [ay,am]=a.split("-").map(Number),[by,bm]=b.split("-").map(Number);return (by-ay)*12+(bm-am)+1};
+const mesCurto=k=>{const [y,m]=k.split("-");return new Date(+y,+m-1,1).toLocaleDateString("pt-BR",{month:"short"}).replace(".","")+"/"+y.slice(2)};
+// situação do jogador: total pago x meses devidos (do início da cobrança até o mês atual)
+function situacao(j,extra=0){
+  const F=+S.config.valorMensal||0;const ini=j.inicio||S.config.inicioCobranca||monthKey();
+  const pago=(S.pagamentos||[]).filter(p=>p.jid===j.id).reduce((t,p)=>t+(+p.valor||0),0)+extra;
+  const devidos=Math.max(0,mesesEntre(ini,monthKey()));
+  const cobertos=F>0?Math.floor(pago/F+1e-9):0;const resto=Math.round((pago-cobertos*F)*100)/100;
+  const saldo=Math.round((pago-devidos*F)*100)/100;
+  return{F,ini,pago,devidos,cobertos,resto,saldo,ate:cobertos>0?addMes(ini,cobertos-1):null};
+}
+function txtSit(x){
+  const ate=x.ate?`Pago até ${mesCurto(x.ate)}`:"Nenhum mês completo pago";
+  const parc=x.resto>0?` · ${brl(x.resto)} ${x.ate||x.cobertos?"adiantados para "+mesCurto(addMes(x.ini,x.cobertos)):"parcial"}`:"";
+  return ate+parc;
+}
+function pillSit(x){return x.saldo>0?`<span class="pill g">crédito ${brl(x.saldo)}</span>`:x.saldo<0?`<span class="pill red">deve ${brl(-x.saldo)}</span>`:`<span class="pill g">em dia</span>`}
+function vMensalistas(mens){
+  const sit=mens.map(j=>[j,situacao(j)]);const dev=sit.filter(([j,x])=>x.saldo<0);
+  const aReceber=dev.reduce((t,[j,x])=>t-x.saldo,0);
+  return `<div class="card"><h2>Mensalistas<span class="r">${brl(S.config.valorMensal)}/mês</span></h2>
+    <div class="meta" style="margin-bottom:6px">${sit.length-dev.length} em dia · ${dev.length} devendo${dev.length?" · a receber "+brl(aReceber):""} · posição de ${mesCurto(monthKey())}</div>
+    ${mens.length?`<ul class="list">${sit.sort((a,b)=>a[1].saldo-b[1].saldo||a[0].nome.localeCompare(b[0].nome,"pt-BR")).map(([j,x])=>`<li onclick="pagar('${j.id}')" style="cursor:pointer"><div class="grow"><div class="name">${esc(j.nome)}</div><div class="meta">${txtSit(x)}</div></div>${pillSit(x)}<button class="btn" style="padding:6px 10px;font-size:13px">+ R$</button></li>`).join("")}</ul>`:`<div class="empty">Nenhum mensalista cadastrado.</div>`}
+    ${dev.length?`<button class="btn sec full" style="margin-top:8px" onclick="cobrar()">Mensagem de cobrança</button>`:""}
+    <div class="note">Toque no jogador para lançar o valor pago. Ex.: R$ 100 com mensalidade de ${brl(S.config.valorMensal)} cobre ${S.config.valorMensal>0?Math.floor(100/S.config.valorMensal):0} meses.</div>
+  </div>`;
+}
+function pagar(id){
+  const j=P(id);const x=situacao(j);
+  const hist=(S.pagamentos||[]).filter(p=>p.jid===id).sort((a,b)=>b.data.localeCompare(a.data));
+  openSheet(`<h3>${esc(j.nome)}</h3>
+  <div class="row" style="margin:4px 0 2px"><div class="grow meta">${txtSit(x)}</div>${pillSit(x)}</div>
+  <div class="grid2"><div><label>Valor pago (R$)</label><input id="pg_v" type="number" step="0.01" inputmode="decimal" value="${x.saldo<0?-x.saldo:x.F}"></div><div><label>Data</label><input id="pg_d" type="date" value="${iso(new Date())}"></div></div>
+  <label>Observação (opcional)</label><input id="pg_o" placeholder="Pix, dinheiro…">
+  <div class="banner" id="pg_prev" style="margin:10px 0 0"></div>
+  <div class="acts"><button class="btn sec" onclick="closeSheet()">Cancelar</button><button class="btn" id="pg_ok">Lançar pagamento</button></div>
+  <label>Cobrar mensalidade a partir de</label><input id="pg_ini" type="month" value="${x.ini}">
+  ${hist.length?`<div class="meta" style="margin:12px 0 2px;font-weight:700;color:var(--ink)">Pagamentos lançados (total ${brl(x.pago)})</div><ul class="list">${hist.map(p=>`<li><div class="grow"><div class="name">${brl(p.valor)}</div><div class="meta">${fmtDate(p.data)}${p.obs?" · "+esc(p.obs):""}</div></div><button class="btn ghost" onclick="delPag('${p.id}','${id}')">✕</button></li>`).join("")}</ul>`:""}`);
+  const prev=()=>{const v=+$("#pg_v").value||0;const y=situacao(Object.assign({},j,{inicio:$("#pg_ini").value||x.ini}),v);
+    const meses=x.F>0?Math.floor(v/x.F+1e-9):0,sobra=Math.round((v-meses*x.F)*100)/100;
+    $("#pg_prev").innerHTML=v>0?`Este pagamento cobre <b>${meses} ${meses===1?"mês":"meses"}</b>${sobra>0?` e sobram <b>${brl(sobra)}</b>`:""}.<br>Depois dele: ${txtSit(y)} · ${y.saldo>0?"crédito de "+brl(y.saldo):y.saldo<0?"ainda deve "+brl(-y.saldo):"em dia"}.`:"Informe o valor pago.";
+    $("#pg_prev").style.background=y.saldo<0&&v>0?"var(--redl)":"var(--gl)";$("#pg_prev").style.color=y.saldo<0&&v>0?"var(--red)":"var(--g)"};
+  $("#pg_v").oninput=prev;$("#pg_ini").oninput=prev;prev();
+  $("#pg_ok").onclick=()=>{const v=Math.round((+$("#pg_v").value||0)*100)/100;if(v<=0){toast("Informe o valor pago");return}
+    const ini=$("#pg_ini").value;if(ini&&ini!==(S.config.inicioCobranca||""))j.inicio=ini;else delete j.inicio;
+    S.pagamentos.push({id:uid(),jid:id,valor:v,data:$("#pg_d").value||iso(new Date()),obs:$("#pg_o").value.trim()});
+    closeSheet();commit();const y=situacao(j);toast(`${j.nome}: ${y.saldo<0?"ainda deve "+brl(-y.saldo):y.saldo>0?"crédito de "+brl(y.saldo):"em dia"}`)};
+}
+function delPag(pid,jid){confirmar("Apagar este pagamento?",()=>{S.pagamentos=S.pagamentos.filter(p=>p.id!==pid);commit();pagar(jid)},"Apagar")}
+function payM(id){const k=caixaMes;S.pagMensal[k]=S.pagMensal[k]||{};if(S.pagMensal[k][id])delete S.pagMensal[k][id];else S.pagMensal[k][id]=+S.config.valorMensal;commit()}
+function payA(d,id){S.pagAvulso[d]=S.pagAvulso[d]||{};if(S.pagAvulso[d][id])delete S.pagAvulso[d][id];else S.pagAvulso[d][id]=+S.config.valorAvulso;commit()}
+function cobrar(){const dev=S.jogadores.filter(j=>j.tipo==="Mensalista").map(j=>[j,situacao(j)]).filter(([j,x])=>x.saldo<0).sort((a,b)=>a[1].saldo-b[1].saldo);
+  const t=`💰 *Mensalidades – posição de ${monthLabel(monthKey())}*\nMensalidade: ${brl(S.config.valorMensal)}\n\nEm aberto:\n`+dev.map(([j,x])=>`• ${j.nome} – ${brl(-x.saldo)}`).join("\n")+`\n\nBora acertar, pessoal! 🙏`;
+  openSheet(`<h3>Cobrança</h3><pre class="share">${esc(t)}</pre><div class="acts"><button class="btn sec" onclick="closeSheet()">Fechar</button><button class="btn" id="cp">Copiar</button></div>`);$("#cp").onclick=()=>copy(t)}
+function novoLanc(sig){
+  openSheet(`<h3>${sig<0?"Nova despesa":"Nova entrada"}</h3><label>Descrição</label><input id="l_d" placeholder="${sig<0?"Aluguel do campo":"Doação, multa…"}">
+  <div class="grid2"><div><label>Valor (R$)</label><input id="l_v" type="number" step="0.01" inputmode="decimal"></div><div><label>Data</label><input id="l_dt" type="date" value="${caixaMes===monthKey()?iso(new Date()):caixaMes+"-01"}"></div></div>
+  <div class="acts"><button class="btn sec" onclick="closeSheet()">Cancelar</button><button class="btn" id="okL">Salvar</button></div>`);
+  $("#okL").onclick=()=>{const v=Math.abs(+$("#l_v").value);if(!v){toast("Informe o valor");return}S.lancamentos.push({id:uid(),desc:$("#l_d").value.trim()||(sig<0?"Despesa":"Entrada"),valor:sig*v,data:$("#l_dt").value||iso(new Date())});closeSheet();commit()};
+}
+function delLanc(id){confirmar("Remover lançamento?",()=>{S.lancamentos=S.lancamentos.filter(l=>l.id!==id);commit()},"Remover")}
+
+// ---------- Elenco ----------
+function vElenco(){
+  const js=S.jogadores.slice().sort((a,b)=>a.nome.localeCompare(b.nome,"pt-BR"));
+  return `<div class="card"><button class="btn full" onclick="editJog()">+ Adicionar jogador</button>
+   <button class="btn sec full" style="margin-top:8px" onclick="importar()">Colar lista de nomes</button></div>
+  <div class="card"><h2>Elenco<span class="r">${js.length} jogadores</span></h2>
+  ${js.length?`<ul class="list">${js.map(j=>`<li onclick="editJog('${j.id}')" style="cursor:pointer"><div class="grow"><div class="name">${esc(j.nome)} ${j.pos==="Goleiro"?"🧤":""}</div><div class="meta">${j.pos} · ${j.tipo}</div></div><span class="stars">${stars(j.nivel)}</span></li>`).join("")}</ul>`:`<div class="empty">Nenhum jogador ainda.</div>`}</div>
+  ${vAdmins()}
+  <div class="card"><button class="btn sec full" onclick="editJogo()">Configurações da pelada</button>
+  <button class="btn sec full" style="margin-top:8px" onclick="backup()">Transferir / backup dos dados</button>
+  <div class="note">${FB?"Os dados ficam salvos no Firebase e aparecem para todos que abrirem o link.":"Os dados ficam salvos neste aparelho."}</div></div>`;
+}
+function backup(){
+  const txt=JSON.stringify(S);
+  openSheet(`<h3>Transferir dados</h3><div class="meta">Normalmente não precisa: com a nuvem ativa tudo sincroniza sozinho. Use se quiser guardar uma cópia ou levar os dados manualmente para outro aparelho.</div>
+  <div class="acts"><button class="btn" id="cpB">Copiar dados</button></div>
+  <label>Colar dados copiados de outro aparelho</label><textarea id="impB" rows="4" placeholder="Cole aqui…"></textarea>
+  <div class="acts"><button class="btn sec" onclick="closeSheet()">Fechar</button><button class="btn danger" id="okB">Substituir pelos dados colados</button></div>`);
+  $("#cpB").onclick=()=>copy(txt);
+  $("#okB").onclick=()=>{let d;try{d=JSON.parse($("#impB").value)}catch(e){toast("Texto inválido");return}
+    if(!d||!Array.isArray(d.jogadores)){toast("Texto inválido");return}
+    S=merge(d);closeSheet();commit();toast(S.jogadores.length+" jogadores importados")};
+}
+function editJog(id){if(RO())return;
+  const j=id?P(id):{nome:"",pos:"Linha",nivel:3,tipo:"Mensalista"};
+  openSheet(`<h3>${id?"Editar":"Novo"} jogador</h3>
+  <label>Nome</label><input id="j_n" value="${esc(j.nome)}" autocomplete="off">
+  <div class="grid2"><div><label>Posição</label><select id="j_p">${POS.map(o=>`<option value="${o}" ${o===j.pos?"selected":""}>${POS_LBL[o]||o}</option>`).join("")}</select></div>
+  <div><label>Tipo</label><select id="j_t">${["Mensalista","Avulso"].map(o=>`<option ${o===j.tipo?"selected":""}>${o}</option>`).join("")}</select></div></div>
+  <label>Foto (opcional)</label><div class="row"><div id="j_fp">${j.foto?`<img class="av" src="${j.foto}">`:`<div class="av">${esc(ini(j.nome||"?"))}</div>`}</div><label style="margin:0;color:var(--ink);background:var(--line);border-radius:10px;font-size:14px;font-weight:600;padding:10px 14px;cursor:pointer">Escolher foto<input type="file" id="j_f" accept="image/*" style="display:none"></label>${j.foto?`<button class="btn ghost" id="j_fx">remover</button>`:""}</div>
+  <label>Nível (para equilibrar os times)</label><div class="seg" id="j_l">${[1,2,3,4,5].map(n=>`<button data-n="${n}" class="${n==j.nivel?"on":""}">${"★".repeat(n)}</button>`).join("")}</div>
+  <div class="acts">${id?`<button class="btn danger" id="delJ">Excluir</button>`:`<button class="btn sec" onclick="closeSheet()">Cancelar</button>`}<button class="btn" id="okJ">Salvar</button></div>`);
+  let lvl=j.nivel,foto=j.foto||"";
+  $("#j_f").onchange=async e=>{const f=e.target.files[0];if(!f)return;try{foto=await lerFoto(f);$("#j_fp").innerHTML=`<img class="av" src="${foto}">`}catch(x){toast("Não consegui ler a imagem")}};
+  if($("#j_fx"))$("#j_fx").onclick=()=>{foto="";$("#j_fp").innerHTML=`<div class="av">${esc(ini(j.nome||"?"))}</div>`};
+  document.querySelectorAll("#j_l button").forEach(b=>b.onclick=()=>{lvl=+b.dataset.n;document.querySelectorAll("#j_l button").forEach(x=>x.classList.toggle("on",x===b))});
+  if(!id)setTimeout(()=>$("#j_n").focus(),50);
+  $("#okJ").onclick=()=>{const nome=$("#j_n").value.trim();if(!nome){toast("Informe o nome");return}
+    const d={nome,pos:$("#j_p").value,tipo:$("#j_t").value,nivel:lvl,foto};
+    if(id)Object.assign(P(id),d);else S.jogadores.push({id:uid(),...d});closeSheet();commit()};
+  if(id)$("#delJ").onclick=()=>confirmar("Excluir "+j.nome+"?",()=>{S.jogadores=S.jogadores.filter(x=>x.id!==id);delete S.jogo.status[id];S.jogo.ordem=S.jogo.ordem.filter(x=>x!==id);S.times=S.times.map(t=>t.filter(x=>x!==id));commit()},"Excluir");
+}
+function importar(){
+  openSheet(`<h3>Colar lista de nomes</h3><div class="note" style="margin-top:0">Um nome por linha (pode colar a lista do WhatsApp; números e emojis são removidos). Escreva "gol" ou 🧤 ao lado para marcar goleiro.</div>
+  <textarea id="imp" rows="9" style="margin-top:8px" placeholder="1. João&#10;2. Pedro 🧤&#10;3. Carlos"></textarea>
+  <div class="acts"><button class="btn sec" onclick="closeSheet()">Cancelar</button><button class="btn" id="okI">Importar</button></div>`);
+  $("#okI").onclick=()=>{const antes=S.jogadores.length;parseNomes($("#imp").value).forEach(acharOuCriar);
+    closeSheet();commit();toast((S.jogadores.length-antes)+" jogadores adicionados")};
+}
+init();
+</script>
+<script type="module">
+// ---------- Firebase (banco de dados + login dos administradores) ----------
+const V="10.12.2",B=`https://www.gstatic.com/firebasejs/${V}/`;
+try{
+  const {firebaseConfig}=await import("./firebase-config.js");
+  if(!firebaseConfig||!firebaseConfig.apiKey||firebaseConfig.apiKey.includes("COLE"))throw new Error("sem config");
+  const {initializeApp}=await import(B+"firebase-app.js");
+  const fs=await import(B+"firebase-firestore.js");
+  const au=await import(B+"firebase-auth.js");
+  const app=initializeApp(firebaseConfig);
+  const db=fs.initializeFirestore(app,{localCache:fs.persistentLocalCache()});
+  const auth=au.getAuth(app);
+  const rEstado=fs.doc(db,"pelada","estado"),rCaixa=fs.doc(db,"pelada","caixa"),rAdm=fs.doc(db,"acesso","admins");
+  let unsubCaixa=null;
+  window.FB_API={
+    ouvirEstado:(cb,err)=>fs.onSnapshot(rEstado,{includeMetadataChanges:false},s=>cb({existe:s.exists(),dados:s.data(),pendente:s.metadata.hasPendingWrites}),err),
+    ouvirCaixa:cb=>{if(unsubCaixa)unsubCaixa();unsubCaixa=fs.onSnapshot(rCaixa,s=>cb(s.data()),()=>{})},
+    salvar:async(estado,caixa)=>{await fs.setDoc(rEstado,estado);await fs.setDoc(rCaixa,caixa)},
+    lerAdmins:async()=>{const s=await fs.getDoc(rAdm);return s.exists()?s.data():null},
+    salvarAdmins:a=>fs.setDoc(rAdm,a),
+    entrar:async()=>{const p=new au.GoogleAuthProvider();try{await au.signInWithPopup(auth,p)}catch(e){if(e.code==="auth/popup-blocked"||e.code==="auth/operation-not-supported-in-this-environment")await au.signInWithRedirect(auth,p);else throw e}},
+    sair:()=>au.signOut(auth),
+    aoLogar:cb=>au.onAuthStateChanged(auth,u=>{if(!u&&unsubCaixa){unsubCaixa();unsubCaixa=null}cb(u)})
+  };
+  window.FB_PRONTO=true;window.dispatchEvent(new Event("fb-pronto"));
+}catch(e){console.warn("Firebase:",e);window.FB_ERRO=true;window.dispatchEvent(new Event("fb-erro"))}
+</script>
+</body>
+</html>
